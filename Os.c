@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,19 +12,17 @@ struct bridge {
  int south_waiting;
  int south_crossing;
  int south_consecutive;
- struct lock *lock;
- struct condition *northbound_done;
- struct condition *southbound_done;
-
-};
-
+ struct lock lock;
+ struct condition northbound_done;
+ struct condition southbound_done;
+}
 void bridge_init(struct bridge *b)
 {
  b->north_waiting = 0;
- b->north_crossing = 0;
+ b->north_crossing = 0;;
  b->north_consecutive = 0;
  b->south_waiting = 0;
- b->south_crossing = 0;
+ b->south_crossing = 0
  b->south_consecutive = 0;
  lock_init(&b->lock);
  cond_init(&b->northbound_done);
@@ -34,13 +33,13 @@ int bridge_arrive_north(struct bridge *b)
  lock_acquire(&b->lock);
  b->north_waiting++;
  while ((b->south_crossing > 0) ||
- ((b->south_waiting > 0) && (b->north_consecutive >= 5)) ){
- cond_wait(&b->southbound_done);
+ ((b->south_waiting > 0) && (b->northConsecutive >= 5)) {
+ cond_wait(&b->southbound_done;
  }
  b->north_waiting--;
  b->north_crossing++;
- b->north_consecutive++;
- b->south_consecutive = 0;
+ b->northConsecutive++;
+ b->southConsecutive = 0;
  lock_release(&b->lock);
 }
 int bridge_leave_north(struct bridge *b)
@@ -52,17 +51,20 @@ int bridge_leave_north(struct bridge *b)
  }
  lock_release(&b->lock);
 }
+-8-
+Additional working space for Problem 5, if needed.
 int bridge_arrive_south(struct bridge *b)
 {
  lock_acquire(&b->lock);
  b->south_waiting++;
- while ((b->north_crossing > 0) ||((b->north_waiting > 0) && (b->south_consecutive >= 5))) {
- cond_wait(&b->northbound_done);
+ while ((b->north_crossing > 0) ||
+ ((b->north_waiting > 0) && (b->southConsecutive >= 5)) {
+ cond_wait(&b->northbound_done;
  }
  b->south_waiting--;
  b->south_crossing++;
- b->south_consecutive++;
- b->north_consecutive = 0;
+ b->southConsecutive++;
+ b->northConsecutive = 0;
  lock_release(&b->lock);
 }
 int bridge_leave_south(struct bridge *b)
@@ -74,6 +76,7 @@ int bridge_leave_south(struct bridge *b)
  }
  lock_release(&b->lock);
 }
+
 int main()
 {
 	struct bridge  a;
